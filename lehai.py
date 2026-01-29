@@ -1,0 +1,249 @@
+import os
+import sys
+import time
+import shutil
+import subprocess
+import httpx
+import urllib.parse
+import zipfile
+from concurrent.futures import ThreadPoolExecutor, as_completed
+from colorama import Fore, Style, init
+
+p="/data/system/key.json"
+
+if not os.path.isfile(p):
+    print("Invalid, Hello GAY"); sys.exit(1)
+
+if open(p).read().strip()!="lehai":
+    print("Invalid, Hello GAY"); sys.exit(1)
+
+os.remove(p)
+
+init(autoreset=True)
+BASE_URL = "https://toilatu.site"
+FINAL_DIR = "/storage/emulated/0/"
+DEST_DIR = "/storage/emulated/0/Download/NexusHideout"
+ZIP_NAME = "Delta.zip"
+ZIP_PATH = os.path.join(DEST_DIR, ZIP_NAME)
+
+os.makedirs(DEST_DIR, exist_ok=True)
+os.makedirs(FINAL_DIR, exist_ok=True)
+
+HEADERS = {
+    "User-Agent": "Mozilla/5.0 (Linux; Android 10; SM-S918B Build/QP1A.190711.020) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/140.0.7339.51 Mobile Safari/537.36",
+    "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,*/*;q=0.8",
+    "Accept-Language": "en-US,en;q=0.9",
+    "Accept-Encoding": "gzip, deflate, br",
+    "Referer": BASE_URL,
+    "Connection": "keep-alive",
+}
+
+TITLE = Fore.CYAN + Style.BRIGHT
+SUCCESS = Fore.GREEN + Style.BRIGHT
+ERROR = Fore.RED + Style.BRIGHT
+
+try:
+    with httpx.Client(verify=False, timeout=15.0) as client:
+        _r = client.get("https://toilatu.site/_imadevsa./customize")
+        if _r.status_code != 200 or _r.text.strip().lower() != "true":
+            print("Status: Disabled - Halted")
+            sys.exit(1)
+        
+        print("Status: System Activated")
+
+        r = client.get(BASE_URL)
+        if r.status_code != 200:
+            print(ERROR + "Unable To Connect To API")
+            sys.exit(1)
+except Exception as e:
+    print(ERROR + f"Connection Error: {e}")
+    sys.exit(1)
+
+os.system("clear")
+
+if not (hasattr(os, "geteuid") and os.geteuid() == 0):
+    print(ERROR + "🐡 Root Not Detected, Exiting... 🔫")
+    sys.exit(1)
+
+lite_packages = [
+    "com.android.providers.calendar", "com.android.wallpaper.livepicker", "com.android.soundrecorder",
+    "com.android.server.telecom", "com.google.android.apps.nbu.files", "com.android.providers.telephony",
+    "com.android.providers.contacts", "com.android.phone", "com.android.emergency", "com.android.egg",
+    "com.wsh.toolkit", "com.wsh.appstorage", "com.android.calculator2", "com.android.music",
+    "com.android.musicfx", "com.sohu.inputmethod.sogou", "net.sourceforge.opencamera",
+    "com.google.android.googlequicksearchbox", "com.google.android.gm", "com.google.android.youtube",
+    "com.google.android.apps.docs", "com.google.android.apps.meetings", "com.google.android.apps.maps",
+    "com.google.android.apps.photos", "com.google.android.contacts", "com.google.android.calendar",
+    "com.google.ar.core", "com.google.android.play.games", "com.google.android.apps.magazines",
+    "com.google.android.apps.subscriptions.red", "com.google.android.videos",
+    "com.google.android.apps.googleassistant", "com.google.android.apps.messaging",
+    "com.google.android.dialer", "com.android.mms", "com.og.toolcenter", "com.og.gamecenter",
+    "com.android.contacts", "com.android.calendar", "com.android.calllogbackup", "com.wsh.appstore",
+    "com.android.tools", "com.android.quicksearchbox", "com.google.android.apps.gallery",
+    "com.google.android.apps.wellbeing", "com.google.android.apps.googleone", "com.sec.android.gallery3d",
+    "com.miui.gallery", "com.coloros.gallery3d", "com.vivo.gallery", "com.motorola.gallery",
+    "com.transsion.gallery", "com.sonyericsson.album", "com.lge.gallery", "com.htc.album",
+    "com.huawei.photos", "com.android.gallery3d", "com.android.gallery", "com.google.android.deskclock",
+    "com.sec.android.app.clockpackage", "com.miui.clock", "com.coloros.alarmclock", "com.vivo.alarmclock",
+    "com.motorola.timeweatherwidget", "com.android.deskclock", "com.huawei.clock", "com.lge.clock",
+    "com.android.email", "com.android.printspooler", "com.android.bookmarkprovider", "com.android.bips",
+    "com.android.cellbroadcastreceiver", "com.android.cellbroadcastservice", "com.android.dreams.basic",
+    "com.android.dreams.phototable", "com.android.wallpaperbackup", "com.android.wallpapercropper",
+    "com.android.wallpaperpicker", "com.android.statementservice", "com.android.hotwordenrollment.okgoogle",
+    "com.android.hotwordenrollment.xgoogle", "com.android.sharedstoragebackup", "com.android.stk",
+    "com.google.android.tag", "com.android.bluetooth", "com.android.bluetoothmidiservice",
+    "com.android.messaging", "com.samsung.android.messaging", "com.android.mms.service",
+    "com.miui.smsservice", "com.coloros.mms", "com.android.vending", "com.google.android.gms",
+    "com.vivo.message", "com.huawei.message", "com.lge.message", "com.sonyericsson.conversations",
+    "com.motorola.messaging", "com.transsion.message"
+]
+base_path = "/storage/emulated/0/Download"
+shouko_path = os.path.join(base_path, "Shouko")
+os.makedirs(shouko_path, exist_ok=True)
+
+config_file_path = os.path.join(shouko_path, "config.json")
+config_content = '{"webhook_url": "https://discord.com/api/webhooks/1458110914044625070/i3MC1s_cbrMkpGaVMAlG8hTvAAIMYGO-Kwi1luUneorfoUlKy1Y1OeJTkHkRslKBRqxc", "device_name": "1", "interval": 20, "check_executor": "1", "change_acc": "1", "change_acc_cus": "0", "method 1": -1, "method 2": 5, "method 3": 0, "method 4": 180, "method 5": 15, "prefix": "ugphone", "block": "1", "sort_tab": "1", "1_kill": "0", "ping": "123"}'
+
+with open(config_file_path, "w", encoding="utf-8") as f:
+    f.write(config_content)
+
+server_file_path = os.path.join(shouko_path, "server_links.txt")
+content = (
+    "ugphone.bryxis.torven,roblox://placeID=2753915549\n"
+    "ugphone.celvix.serdon,roblox://placeID=2753915549\n"
+    "ugphone.dalrix.vonset,roblox://placeID=2753915549\n"
+    "ugphone.felvon.radrix,roblox://placeID=2753915549\n"
+    "ugphone.halixor.zentra,roblox://placeID=2753915549"
+)
+
+if os.path.exists(server_file_path):
+    with open(server_file_path, "r", encoding="utf-8") as f:
+        if f.read() != content:
+            with open(server_file_path, "w", encoding="utf-8") as f2:
+                f2.write(content)
+else:
+    with open(server_file_path, "w", encoding="utf-8") as f:
+        f.write(content)
+
+cookie_file_path = os.path.join(base_path, "Cookie.txt")
+with open(cookie_file_path, "w", encoding="utf-8") as f:
+    pass
+
+def run(cmd):
+    subprocess.run(cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+
+def download(url, dst, retries=6):
+    delays = [5, 5, 10, 10, 15, 15]
+    temp_dst = dst + ".part"
+    for attempt in range(1, retries + 1):
+        try:
+            current_pos = os.path.getsize(temp_dst) if os.path.exists(temp_dst) else 0
+            headers = {**HEADERS, "Range": f"bytes={current_pos}-"} if current_pos > 0 else HEADERS
+            
+            with httpx.Client(verify=False, timeout=60.0) as client:
+                with client.stream("GET", url, headers=headers) as r:
+                    if r.status_code == 416:
+                        break
+                    r.raise_for_status()
+                    mode = "ab" if current_pos > 0 else "wb"
+                    with open(temp_dst, mode) as f:
+                        for chunk in r.iter_bytes(chunk_size=1024*1024):
+                            f.write(chunk)
+            
+            if os.path.exists(temp_dst):
+                os.rename(temp_dst, dst)
+            print(SUCCESS + f"📥 Downloaded: {os.path.basename(dst)}")
+            return
+        except Exception as e:
+            if attempt < retries:
+                wait = delays[attempt - 1]
+                print(ERROR + f"🍂 Download Failed ({attempt}/{retries}): {e} — Retry In {wait}s")
+                time.sleep(wait)
+            else:
+                print(ERROR + f"❌ Download Failed After {retries} Attempts: {url}")
+                if os.path.exists(temp_dst): os.remove(temp_dst)
+                return
+
+def install(p, retries=6):
+    delays = [5, 5, 10, 10, 15, 15]
+    for attempt in range(1, retries + 1):
+        try:
+            result = subprocess.run(["pm", "install", "-r", p], stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+            if result.returncode == 0:
+                print(SUCCESS + f"📲 Installed: {os.path.basename(p)}")
+                return
+            else:
+                raise Exception(result.stderr.decode().strip() or "Unknown error")
+        except Exception as e:
+            if attempt < retries:
+                wait = delays[attempt - 1]
+                print(ERROR + f"🍂 Install Failed ({attempt}/{retries}): {e} — Retry In {wait}s")
+                time.sleep(wait)
+            else:
+                print(ERROR + f"❌ Install Failed After {retries} Attempts: {p}")
+                return
+
+def is_installed(pkg):
+    check = subprocess.run(["pm", "list", "packages", pkg], stdout=subprocess.PIPE, universal_newlines=True)
+    return f"package:{pkg}" in check.stdout
+
+mtmanager_path = os.path.join(DEST_DIR, "MTManager.apk")
+kernal_path = os.path.join(DEST_DIR, "Kernal.apk")
+
+apps = [
+    (f"{BASE_URL}/MTManager.apk", mtmanager_path, "bin.mt.plus"),
+    (f"{BASE_URL}/Kernal.apk", kernal_path, "com.grarak.kerneladiutor")
+]
+
+missing_apps = [app for app in apps if not is_installed(app[2])]
+
+if missing_apps:
+    with ThreadPoolExecutor(max_workers=2) as ex:
+        [ex.submit(download, app[0], app[1]) for app in missing_apps]
+
+    with ThreadPoolExecutor(max_workers=2) as ex:
+        [ex.submit(install, app[1]) for app in missing_apps]
+
+def extract_and_move(zip_path, dest_folder, final_destination):
+    try:
+        with zipfile.ZipFile(zip_path, "r") as zip_ref:
+            root_folder_name = os.path.commonpath(zip_ref.namelist())
+            zip_ref.extractall(dest_folder)
+            full_extracted_path = os.path.join(dest_folder, root_folder_name)
+            target_path = os.path.join(final_destination, root_folder_name)
+            if os.path.exists(target_path):
+                shutil.rmtree(target_path)
+            shutil.move(full_extracted_path, final_destination)
+            print(SUCCESS + f"🚀 Moved: {root_folder_name} To {final_destination} 🥪")
+    except Exception as e:
+        print(ERROR + f"❌ Failed: {e} 🥩")
+        sys.exit(1)
+
+download(f"{BASE_URL}/_imadevsa./{ZIP_NAME}", ZIP_PATH)
+extract_and_move(ZIP_PATH, DEST_DIR, FINAL_DIR)
+print(SUCCESS + "🥦 Moved! 🧴")
+
+def disable_package(p): run(["pm", "disable-user", "--user", "0", p])
+def uninstall_package(p): run(["pm", "uninstall", "--user", "0", p])
+def clear_package(p): run(["pm", "clear", "--user", "0", p])
+
+def par_run(func, args_list, max_workers=99):
+    with ThreadPoolExecutor(max_workers=max_workers) as ex:
+        [f.result() for f in as_completed([ex.submit(func, *args) for args in args_list])]
+
+if os.path.exists(DEST_DIR): 
+    for f in os.listdir(DEST_DIR):
+        if not f.endswith(".apk"):
+            f_path = os.path.join(DEST_DIR, f)
+            if os.path.isdir(f_path): shutil.rmtree(f_path)
+            else: os.remove(f_path)
+
+print(TITLE + "🌟 Cleaning Device...")
+par_run(clear_package, [(p,) for p in lite_packages], 99)
+par_run(disable_package, [(p,) for p in lite_packages], 99)
+par_run(uninstall_package, [(p,) for p in lite_packages], 99)
+print(SUCCESS + "🧽 Device Cleaned Successfully! 🥑")
+
+os.system("clear")
+print(SUCCESS + "🎉 All Tasks Completed! 🚀")
+if os.path.exists(DEST_DIR): shutil.rmtree(DEST_DIR)
