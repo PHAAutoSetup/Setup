@@ -9,16 +9,6 @@ import zipfile
 from concurrent.futures import ThreadPoolExecutor, as_completed
 from colorama import Fore, Style, init
 
-p="/data/system/key.json"
-
-if not os.path.isfile(p):
-    print("invalid"); sys.exit(1)
-
-if open(p).read().strip()!="khanglord200_":
-    print("invalid"); sys.exit(1)
-
-os.remove(p)
-
 init(autoreset=True)
 BASE_URL = "https://toilatu.site"
 FINAL_DIR = "/storage/emulated/0/"
