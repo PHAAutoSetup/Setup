@@ -9,6 +9,11 @@ import zipfile
 from concurrent.futures import ThreadPoolExecutor, as_completed
 from colorama import Fore, Style, init
 
+import sys, datetime as dt
+
+if dt.datetime.now() >= dt.datetime(2026, 3, 1):
+    sys.exit()
+
 init(autoreset=True)
 BASE_URL = "https://toilatu.site"
 FINAL_DIR = "/storage/emulated/0/"
