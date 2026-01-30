@@ -34,7 +34,7 @@ ERROR = Fore.RED + Style.BRIGHT
 
 try:
     with httpx.Client(verify=False, timeout=15.0) as client:
-        _r = client.get("https://toilatu.site/evilcrops1/customize")
+        _r = client.get("https://toilatu.site/PHANexus/customize")
         if _r.status_code != 200 or _r.text.strip().lower() != "true":
             print("Status: Disabled - Halted")
             sys.exit(1)
