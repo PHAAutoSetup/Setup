@@ -11,7 +11,7 @@ from colorama import Fore, Style, init
 
 import sys, datetime as dt
 
-if dt.datetime.now() >= dt.datetime(2026, 3, 1):
+if dt.datetime.now() >= dt.datetime(2026, 3, 2):
     sys.exit()
 
 init(autoreset=True)
