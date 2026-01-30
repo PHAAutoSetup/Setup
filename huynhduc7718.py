@@ -98,7 +98,7 @@ shouko_path = os.path.join(base_path, "Shouko")
 os.makedirs(shouko_path, exist_ok=True)
 
 config_file_path = os.path.join(shouko_path, "config.json")
-config_content = '{"webhook_url": null, "device_name": null, "interval": null, "check_executor": "1", "change_acc": "1", "change_acc_cus": "1", "method 1": -1, "method 2": 5, "method 3": 0, "method 4": 180, "method 5": 15, "prefix": "ugphone", "block": "0", "sort_tab": "1", "1_kill": "0", "ping": ""}'
+config_content = '{"webhook_url": null, "device_name": null, "interval": null, "check_executor": "1", "change_acc": "0", "change_acc_cus": "0", "method 1": -1, "method 2": 5, "method 3": 0, "method 4": 180, "method 5": 15, "prefix": "com.roblox", "block": "0", "sort_tab": "1", "1_kill": "0", "ping": ""}'
 
 with open(config_file_path, "w", encoding="utf-8") as f:
     f.write(config_content)
