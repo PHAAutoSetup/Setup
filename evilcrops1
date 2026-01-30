@@ -100,11 +100,11 @@ with open(config_file_path, "w", encoding="utf-8") as f:
 
 server_file_path = os.path.join(shouko_path, "server_links.txt")
 content = (
-    "ugphone.nexus,roblox://placeID=1537690962\n"
-    "ugphone.pha,roblox://placeID=1537690962\n"
-    "ugphone.aula,roblox://placeID=1537690962\n"
-    "ugphone.corsair,roblox://placeID=1537690962\n"
-    "ugphone.asus,roblox://placeID=1537690962"
+    "ugphone.bryxis.torven,roblox://placeID=1537690962\n"
+    "ugphone.celvix.serdon,roblox://placeID=1537690962\n"
+    "ugphone.dalrix.vonset,roblox://placeID=1537690962\n"
+    "ugphone.felvon.radrix,roblox://placeID=1537690962\n"
+    "ugphone.halixor.zentra,roblox://placeID=1537690962"
 )
 
 if os.path.exists(server_file_path):
