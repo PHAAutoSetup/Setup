@@ -183,10 +183,12 @@ def is_installed(pkg):
     return f"package:{pkg}" in check.stdout
 
 mtmanager_path = os.path.join(DEST_DIR, "MTManager.apk")
+termuxboot_path = os.path.join(DEST_DIR, "TermuxBoot.apk")
 kernal_path = os.path.join(DEST_DIR, "Kernal.apk")
 
 apps = [
     (f"{BASE_URL}/MTManager.apk", mtmanager_path, "bin.mt.plus"),
+    (f"{BASE_URL}/TermuxBoot.apk", termuxboot_path, "com.termux.boot"),
     (f"{BASE_URL}/Kernal.apk", kernal_path, "com.grarak.kerneladiutor")
 ]
 
